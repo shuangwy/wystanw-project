@@ -2,10 +2,37 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+// require("@babel/polyfill")
+
+// 优化css
+const OptimizeCss = require('optimize-css-assets-webpack-plugin')
+// 优化js
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-    mode: 'development',
-    entry: './client-app/src/index.js',
+    // mode: 'development',
+    mode: 'production',
+    optimization: { //生产环境下才会css压缩一行
+        minimizer: [
+            new OptimizeCss(),
+            new UglifyJsPlugin({
+                cache: true,
+                parallel: true,
+                sourceMap: true, //方便映射调试
+            })
+        ],
+        // splitChunks: {
+        //     cacheGroups: {
+        //       styles: {
+        //         name: 'styles',
+        //         test: /\.css$/,
+        //         chunks: 'all',
+        //         enforce: true,
+        //       },
+        //     },
+        // }
+    },
+    entry: './client-app/index.js',
     output: {
         filename: "bundle.[hash:8].js",
         path: path.resolve(__dirname, 'dist')
@@ -35,9 +62,8 @@ module.exports = {
             hash: true,
         }),
         new CleanWebpackPlugin(),
+        // works productions
         new MiniCssExtractPlugin({
-            // Options similar to the same options in webpackOptions.output
-            // all options are optional
             filename: '[name].[hash:8].css',
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
@@ -45,6 +71,22 @@ module.exports = {
     ],
     module: {
         rules: [
+            {
+                test: /\.m?js$/,
+                exclude: /(node_modules|bower_components)/,
+                include: path.resolve(__dirname, 'client-app'),
+                use: {
+                    loader: 'babel-loader',
+                    options: {
+                        presets: ['@babel/preset-env'],
+                        plugins: [
+                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                            ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                            '@babel/plugin-transform-runtime'
+                        ]
+                    }
+                }
+            },
             {
                 test: /\.css$/g,
                 use: [
