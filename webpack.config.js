@@ -2,6 +2,9 @@ const path = require('path')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
+// const Webpack = require('webpack')
+const proxy = require('./api')
 // require("@babel/polyfill")
 
 // 优化css
@@ -39,12 +42,19 @@ module.exports = {
         // publicPath:'https://wyshuang.com/'  添加公共路径
     },
     devtool: "eval-source-map",
+    // watch: true, //事实打包
+    // watchOptions: {
+    //     aggregateTimeout: 300,
+    //     poll: 1000,
+    //     ignored: /node_modules/,
+    // },
     devServer: {
-        port: 3000,
+        port: 8080,
         compress: true,
         progress: true, //启动压缩
         contentBase: path.join(__dirname, 'dist'),
         open: 'Google Chrome',
+        proxy: proxy
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -70,9 +80,12 @@ module.exports = {
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
+        new CopyWebpackPulgin([
+            { from: "./client-app/doc", to: "./doc" }
+        ]),
+        // new Webpack.BannerPlugin({banner:'make 2020 by wystan'}) //添加版权信息
     ],
     externals: { //不打包
-
     },
     module: {
         rules: [

@@ -11,7 +11,7 @@ class A {
 const str = new A();
 str.start()
 
-"aaaaa".includes('a')
+"aaaaa".includes('a1')
 
 // eslint-disable-next-line no-undef
 let img = new Image();
@@ -20,3 +20,13 @@ img.src = logo
 
 // eslint-disable-next-line no-undef
 document.body.appendChild(img)
+
+
+
+let xhr = new XMLHttpRequest()
+xhr.open("GET", '/api/user', true)
+
+xhr.onload=()=>{
+    console.log(xhr.response)
+}
+xhr.send()
