@@ -10,8 +10,8 @@ const OptimizeCss = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
-    // mode: 'development',
-    mode: 'production',
+    mode: 'development',
+    // mode: 'production',
     optimization: { //生产环境下才会css压缩一行
         minimizer: [
             new OptimizeCss(),
@@ -34,9 +34,11 @@ module.exports = {
     },
     entry: './client-app/index.js',
     output: {
-        filename: "bundle.[hash:8].js",
-        path: path.resolve(__dirname, 'dist')
+        filename: "js/bundle.[hash:8].js",
+        path: path.resolve(__dirname, 'dist'),
+        // publicPath:'https://wyshuang.com/'  添加公共路径
     },
+    devtool: "eval-source-map",
     devServer: {
         port: 3000,
         compress: true,
@@ -64,13 +66,30 @@ module.exports = {
         new CleanWebpackPlugin(),
         // works productions
         new MiniCssExtractPlugin({
-            filename: '[name].[hash:8].css',
+            filename: 'css/[name].[hash:8].css',
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
     ],
+    externals: { //不打包
+
+    },
     module: {
         rules: [
+
+            {
+                test: /\.js$/,
+                include: path.resolve(__dirname, 'client-app'),
+                exclude: /node_modules/,
+                use: {
+                    loader: 'eslint-loader',
+                },
+                enforce: 'pre',
+            },
+            {
+                test: /\.html$/,
+                use: "html-withimg-loader"
+            },
             {
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
@@ -115,6 +134,19 @@ module.exports = {
                         },
                     },
                 ]
+            },
+            {
+                test: /\.(png|jpe?g|gif)$/i,
+                use: [
+                    {
+                        loader: 'url-loader',
+                        options: {
+                            limit: 200 * 1024,
+                            outputPath: 'images',
+                            // publicPath:'www.wyshuang.com', 为图片单独添加路径前缀
+                        }
+                    },
+                ],
             }
         ]
     }
