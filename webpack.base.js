@@ -3,58 +3,17 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
-// const Webpack = require('webpack')
-const proxy = require('./api')
+const Webpack = require('webpack')
 // require("@babel/polyfill")
-
-// 优化css
-const OptimizeCss = require('optimize-css-assets-webpack-plugin')
-// 优化js
-const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
     mode: 'development',
-    // mode: 'production',
-    optimization: { //生产环境下才会css压缩一行
-        minimizer: [
-            new OptimizeCss(),
-            new UglifyJsPlugin({
-                cache: true,
-                parallel: true,
-                sourceMap: true, //方便映射调试
-            })
-        ],
-        // splitChunks: {
-        //     cacheGroups: {
-        //       styles: {
-        //         name: 'styles',
-        //         test: /\.css$/,
-        //         chunks: 'all',
-        //         enforce: true,
-        //       },
-        //     },
-        // }
-    },
+    // noParse://, 不去解析依赖    
     entry: './client-app/index.js',
     output: {
         filename: "js/bundle.[hash:8].js",
         path: path.resolve(__dirname, 'dist'),
         // publicPath:'https://wyshuang.com/'  添加公共路径
-    },
-    devtool: "eval-source-map",
-    // watch: true, //事实打包
-    // watchOptions: {
-    //     aggregateTimeout: 300,
-    //     poll: 1000,
-    //     ignored: /node_modules/,
-    // },
-    devServer: {
-        port: 8080,
-        compress: true,
-        progress: true, //启动压缩
-        contentBase: path.join(__dirname, 'dist'),
-        open: 'Google Chrome',
-        proxy: proxy
     },
     plugins: [
         new HtmlWebpackPlugin({
@@ -83,13 +42,27 @@ module.exports = {
         new CopyWebpackPulgin([
             { from: "./client-app/doc", to: "./doc" }
         ]),
-        // new Webpack.BannerPlugin({banner:'make 2020 by wystan'}) //添加版权信息
+        new Webpack.BannerPlugin({ banner: 'make 2020 by wystan' }), //添加版权信息
+        new Webpack.DefinePlugin({
+            SERVICE_URL: JSON.stringify('https://wyshuang.com')
+        }),
+        new Webpack.IgnorePlugin(/\.\/locale/, /moment/),
+        new Webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, 'lib', 'manifest.json'),
+            context: __dirname,
+        })
     ],
     externals: { //不打包
     },
+    resolve: {
+        modules: [path.resolve('node_modules')],
+        alias: {
+            "@": path.resolve(__dirname, './client-app/src')
+        },
+        extensions: ['.js', '.css', '.json']
+    },
     module: {
         rules: [
-
             {
                 test: /\.js$/,
                 include: path.resolve(__dirname, 'client-app'),
@@ -110,7 +83,7 @@ module.exports = {
                 use: {
                     loader: 'babel-loader',
                     options: {
-                        presets: ['@babel/preset-env'],
+                        presets: ['@babel/preset-env', ["@babel/preset-react", { "development": true }]],
                         plugins: [
                             ["@babel/plugin-proposal-decorators", { "legacy": true }],
                             ["@babel/plugin-proposal-class-properties", { "loose": true }],
