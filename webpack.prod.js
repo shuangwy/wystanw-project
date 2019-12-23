@@ -1,9 +1,8 @@
 let {smart}= require('webpack-merge')
 let base = require('./webpack.base')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-
 const OptimizeCss = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports=smart(base,{
     mode:'production',
@@ -29,7 +28,7 @@ module.exports=smart(base,{
     },
     plugins:[
         new HtmlWebpackPlugin({
-            // template: './client-app/index.html',
+            template: './client-app/pord.html',
             filename: "index.html", //默认就可以
             meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
             title: '天卫二十二',

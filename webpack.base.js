@@ -3,6 +3,7 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
 const Webpack = require('webpack')
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Happypack = require('happypack') //启用多线程打包
 // require("@babel/polyfill")
 
@@ -91,7 +92,7 @@ module.exports = {
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
         new CopyWebpackPulgin([
-            { from: "./client-app/doc", to: "./doc" }
+            { from: "./client-app/doc", to: "./doc" },
         ]),
         new Webpack.BannerPlugin({ banner: 'make 2020 by wystan' }), //添加版权信息
         new Webpack.DefinePlugin({
@@ -99,6 +100,7 @@ module.exports = {
         }),
         new Webpack.IgnorePlugin(/\.\/locale/, /moment/),
        
+
     ],
     externals: { //不打包
     },

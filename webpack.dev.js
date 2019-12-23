@@ -5,8 +5,6 @@ const path = require('path')
 const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-
-
 module.exports=smart(base,{
     mode:'development',
     devServer: {
@@ -25,15 +23,11 @@ module.exports=smart(base,{
     //     ignored: /node_modules/,
     // },
     plugins:[
-        new Webpack.DllReferencePlugin({
-            manifest: path.resolve(__dirname, 'lib', 'manifest.json'),
-            context: __dirname,
-        }),
         new HtmlWebpackPlugin({
             template: './client-app/index.html',
-            // filename: "index.html", //默认就可以
+            filename: "index.html", //默认就可以
             meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
-            // title: '天卫二十二',
+            title: '天卫二十二',
             minify: {
                 collapseWhitespace: true,
                 removeAttributeQuotes: true,
@@ -44,6 +38,10 @@ module.exports=smart(base,{
                 useShortDoctype: true
             },
             hash: true,
+        }),
+        new Webpack.DllReferencePlugin({
+            manifest: path.resolve(__dirname, 'lib', 'manifest.json'),
+            context: __dirname,
         }),
     ]
 })
