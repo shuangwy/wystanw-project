@@ -1,14 +1,38 @@
 const path = require('path')
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
 const Webpack = require('webpack')
+const Happypack = require('happypack') //启用多线程打包
 // require("@babel/polyfill")
 
 module.exports = {
     mode: 'development',
-    // noParse://, 不去解析依赖    
+    // noParse://, 不去解析依赖
+    optimization: {
+        splitChunks: {
+            chunks: 'async',
+            minSize: 30000,
+            // minRemainingSize: 0,
+            maxSize: 0,
+            minChunks: 1,
+            maxAsyncRequests: 6,
+            maxInitialRequests: 4,
+            automaticNameDelimiter: '~',
+            automaticNameMaxLength: 30,
+            cacheGroups: {
+                vendors: {
+                    test: /[\\/]node_modules[\\/]/,
+                    priority: -10
+                },
+                default: {
+                    minChunks: 2,
+                    priority: -20,
+                    reuseExistingChunk: true
+                }
+            }
+        }
+    },
     entry: './client-app/index.js',
     output: {
         filename: "js/bundle.[hash:8].js",
@@ -16,21 +40,48 @@ module.exports = {
         // publicPath:'https://wyshuang.com/'  添加公共路径
     },
     plugins: [
-        new HtmlWebpackPlugin({
-            template: './client-app/index.html',
-            filename: "index.html", //默认就可以
-            meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
-            title: '天卫二十二',
-            minify: {
-                collapseWhitespace: true,
-                removeAttributeQuotes: true,
-                removeComments: true,
-                removeRedundantAttributes: true,
-                removeScriptTypeAttributes: true,
-                removeStyleLinkTypeAttributes: true,
-                useShortDoctype: true
-            },
-            hash: true,
+        new Happypack({
+            id: 'js',
+            use: [{
+                loader: 'babel-loader',
+                options: {
+                    presets: ['@babel/preset-env', ["@babel/preset-react", { "development": true }]],
+                    plugins: [
+                        ["@babel/plugin-proposal-decorators", { "legacy": true }],
+                        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                        '@babel/plugin-transform-runtime'
+                    ]
+                }
+            }]
+        }),
+        new Happypack({
+            id: 'css',
+            use: [
+                MiniCssExtractPlugin.loader,
+                'css-loader',
+                'postcss-loader'
+            ],
+        }),
+        new Happypack({
+            id: "less",
+            use: [
+                {
+                    loader: MiniCssExtractPlugin.loader,
+                },
+                {
+                    loader: 'css-loader',
+                },
+                {
+                    loader: 'postcss-loader'
+                },
+                {
+                    loader: 'less-loader',
+                    options: {
+                        strictMath: true,
+                        noIeCompat: true,
+                    },
+                },
+            ]
         }),
         new CleanWebpackPlugin(),
         // works productions
@@ -47,10 +98,7 @@ module.exports = {
             SERVICE_URL: JSON.stringify('https://wyshuang.com')
         }),
         new Webpack.IgnorePlugin(/\.\/locale/, /moment/),
-        new Webpack.DllReferencePlugin({
-            manifest: path.resolve(__dirname, 'lib', 'manifest.json'),
-            context: __dirname,
-        })
+       
     ],
     externals: { //不打包
     },
@@ -80,46 +128,15 @@ module.exports = {
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
                 include: path.resolve(__dirname, 'client-app'),
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        presets: ['@babel/preset-env', ["@babel/preset-react", { "development": true }]],
-                        plugins: [
-                            ["@babel/plugin-proposal-decorators", { "legacy": true }],
-                            ["@babel/plugin-proposal-class-properties", { "loose": true }],
-                            '@babel/plugin-transform-runtime'
-                        ]
-                    }
-                }
+                use: 'Happypack/loader?id=js',
             },
             {
                 test: /\.css$/g,
-                use: [
-                    MiniCssExtractPlugin.loader,
-                    'css-loader',
-                    'postcss-loader'
-                ],
+                use: 'Happypack/loader?id=css'
             },
             {
                 test: /\.less$/g,
-                use: [
-                    {
-                        loader: MiniCssExtractPlugin.loader,
-                    },
-                    {
-                        loader: 'css-loader',
-                    },
-                    {
-                        loader: 'postcss-loader'
-                    },
-                    {
-                        loader: 'less-loader',
-                        options: {
-                            strictMath: true,
-                            noIeCompat: true,
-                        },
-                    },
-                ]
+                use: 'Happypack/loader?id=less'
             },
             {
                 test: /\.(png|jpe?g|gif)$/i,

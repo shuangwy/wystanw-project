@@ -1,24 +1,8 @@
 const path = require('path')
 const webpack = require('webpack')
+const { dependencies } = require('../package.json')
 
-const vendors = [
-    // "classnames",
-    // "cookie-parser",
-    // "date-format",
-    // "history",
-    // "isomorphic-fetch",
-    // "js-cookie",
-    // "lodash",
-    // "normalizr",
-    "react",
-    "react-dom",
-    // "react-redux",
-    // "react-router",
-    // "react-router-dom",
-    // "redux",
-    // "redux-thunk",
-    // "showdown",
-];
+const vendors =Object.keys(dependencies).filter(item=>item !== '@babel/runtime')
 module.exports = {
     mode: 'development',
     entry: {
