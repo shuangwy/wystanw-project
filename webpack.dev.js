@@ -13,7 +13,8 @@ module.exports=smart(base,{
         progress: true, //启动压缩
         contentBase: path.join(__dirname, 'dist'),
         open: 'Google Chrome',
-        proxy: proxy
+        proxy: proxy,
+        hot:true,
     },
      devtool: "eval-source-map",
     // watch: true, //事实打包
@@ -43,5 +44,7 @@ module.exports=smart(base,{
             manifest: path.resolve(__dirname, 'lib', 'manifest.json'),
             context: __dirname,
         }),
+        new Webpack.NamedChunksPlugin(),
+        new Webpack.HotModuleReplacementPlugin()
     ]
 })
