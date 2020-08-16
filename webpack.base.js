@@ -4,9 +4,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
 const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const Happypack = require('happypack') //启用多线程打包
+const HappyPack = require('happypack') //启用多线程打包
 // require("@babel/polyfill")
-
+const happyThreadPool = HappyPack.ThreadPool({ size: 5 });
 module.exports = {
     mode: 'development',
     // noParse://, 不去解析依赖
@@ -41,9 +41,9 @@ module.exports = {
         // publicPath:'https://wyshuang.com/'  添加公共路径
     },
     plugins: [
-        new Happypack({
+        new HappyPack({
             id: 'js',
-            use: [{
+            loaders: [{
                 loader: 'babel-loader',
                 options: {
                     presets: ['@babel/preset-env', ["@babel/preset-react", { "development": true }]],
@@ -55,33 +55,36 @@ module.exports = {
                 }
             }]
         }),
-        new Happypack({
+        new HappyPack({
             id: 'css',
-            use: [
-                MiniCssExtractPlugin.loader,
+            threadPool: happyThreadPool,
+            verbose: false,
+            loaders: [
                 'css-loader',
                 'postcss-loader'
             ],
         }),
-        new Happypack({
+        new HappyPack({
             id: "less",
-            use: [
-                {
-                    loader: MiniCssExtractPlugin.loader,
-                },
+            threadPool: happyThreadPool,
+            verbose: false,
+            loaders: [
                 {
                     loader: 'css-loader',
+                    options: {
+                        modules: true,
+                    }
                 },
-                {
-                    loader: 'postcss-loader'
-                },
+                'postcss-loader',
                 {
                     loader: 'less-loader',
                     options: {
-                        strictMath: true,
-                        noIeCompat: true,
+                        javascriptEnabled: true,
+                        lessOptions: {
+                            strictMath: true,
+                        }
                     },
-                },
+                }
             ]
         }),
         new CleanWebpackPlugin(),
@@ -91,16 +94,16 @@ module.exports = {
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
         }),
-        new CopyWebpackPulgin([
-            { from: "./client-app/doc", to: "./doc" },
-        ]),
+        new CopyWebpackPulgin({
+            patterns: [
+                { from: "./client-app/doc", to: "./doc" },
+            ]
+        }),
         new Webpack.BannerPlugin({ banner: 'make 2020 by wystan' }), //添加版权信息
         new Webpack.DefinePlugin({
             SERVICE_URL: JSON.stringify('https://wyshuang.com')
         }),
         new Webpack.IgnorePlugin(/\.\/locale/, /moment/),
-       
-
     ],
     externals: { //不打包
     },
@@ -130,15 +133,22 @@ module.exports = {
                 test: /\.m?js$/,
                 exclude: /(node_modules|bower_components)/,
                 include: path.resolve(__dirname, 'client-app'),
-                use: 'Happypack/loader?id=js',
+                use: 'happypack/loader?id=js',
             },
             {
                 test: /\.css$/g,
-                use: 'Happypack/loader?id=css'
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'happypack/loader?id=css',
+                ]
             },
             {
                 test: /\.less$/g,
-                use: 'Happypack/loader?id=less'
+                exclude: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    'happypack/loader?id=less',
+                ]
             },
             {
                 test: /\.(png|jpe?g|gif)$/i,

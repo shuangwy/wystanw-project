@@ -1,5 +1,9 @@
 // require('./src/index.js')
 import React from 'react'
-import {render} from 'react-dom'
+import {
+    render
+} from 'react-dom'
+import App from './src/index'
+import 'antd/dist/antd.css'
 
-render(<h1>我是你爽哥哥</h1>, document.getElementById('root'))
+render(<App />, document.getElementById('root'))

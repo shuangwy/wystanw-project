@@ -1,27 +1,4 @@
-require('./index.css')
-require('./index.less')
-require('@babel/polyfill')
-
-class A {
-    // a = 1
-    start() {
-        // console.log('start')
-    }
-}
-const str = new A();
-str.start()
-
-"aaaaa".includes('a1')
-
-// eslint-disable-next-line no-undef
-let img = new Image();
-import logo from '../public/img/back.JPG'
-img.src = logo
-
-// eslint-disable-next-line no-undef
-document.body.appendChild(img)
-
-
+// require('./index.less')
 
 // let xhr = new XMLHttpRequest()
 // xhr.open("GET", '/api/user', true)
@@ -35,9 +12,27 @@ document.body.appendChild(img)
 // if(SERVICE_URL){
 //     url = 'http://localhost:8080'
 // }else{
-//     url = 'https://wyshuang.com'
+//     url = 'https://wyshuang.com'`
 // }
-// console.log('--------',url)
-// import moment from 'moment'
-const now = moment().endOf('day').fromNow();
-console.log('now',now)
+
+import React, { Component } from 'react'
+import { Input, Space } from 'antd';
+import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import styles from './index.less'
+class App extends Component {
+    render() {
+        return <>
+            <Space direction="vertical">
+                账号<Input.Password placeholder="input password" />
+                密码<Input.Password
+                    placeholder="input password"
+                    iconRender={visible => (visible ? <EyeTwoTone /> : <EyeInvisibleOutlined />)}
+                />
+            </Space>
+            <div className={styles.antbody}>
+                你好啊 啥棍哥
+            </div>
+        </>
+    }
+}
+export default App

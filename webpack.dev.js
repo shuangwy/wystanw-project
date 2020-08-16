@@ -1,5 +1,5 @@
 const {
-    smart
+    merge
 } = require('webpack-merge')
 const base = require('./webpack.base')
 const proxy = require('./api')
@@ -8,7 +8,7 @@ const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const AddAssetHtmlPlugin = require('add-asset-html-webpack-plugin')
 
-module.exports = smart(base, {
+module.exports = merge(base, {
     mode: 'development',
     devServer: {
         port: 3000,
@@ -52,9 +52,7 @@ module.exports = smart(base, {
         new Webpack.NamedChunksPlugin(),
         new Webpack.HotModuleReplacementPlugin(),
         new AddAssetHtmlPlugin({
-            filepath: path.resolve(__dirname, './lib/*.js'),
-            publicPath: './dist',
-            outputPath: './dist'
+            filepath: path.resolve(__dirname, './lib/*.js')
         })
 
     ]
