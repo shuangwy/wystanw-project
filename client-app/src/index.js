@@ -39,5 +39,5 @@ document.body.appendChild(img)
 // }
 // console.log('--------',url)
 // import moment from 'moment'
-// const now = moment().endOf('day').fromNow();
-// console.log('now',now)
+const now = moment().endOf('day').fromNow();
+console.log('now',now)

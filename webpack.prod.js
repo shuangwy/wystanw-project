@@ -28,7 +28,7 @@ module.exports=smart(base,{
     },
     plugins:[
         new HtmlWebpackPlugin({
-            template: './client-app/pord.html',
+            template: './client-app/index.html',
             filename: "index.html", //默认就可以
             meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
             title: '天卫二十二',
