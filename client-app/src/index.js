@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
+import 'antd/dist/antd.css'
 import { Input, Space } from 'antd';
 import { EyeInvisibleOutlined, EyeTwoTone } from '@ant-design/icons';
+import { connect } from 'react-redux'
 class App extends Component {
     componentDidMount() {
         let xhr = new XMLHttpRequest()
@@ -22,4 +24,10 @@ class App extends Component {
         </>
     }
 }
-export default App
+const mapStateToProps = () => {
+
+}
+const mapDispatchToProps = () => {
+
+}
+export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -1,9 +1,15 @@
-// require('./src/index.js')
 import React from 'react'
-import {
-    render
-} from 'react-dom'
+import { render } from 'react-dom'
+import { Provider } from 'react-redux'
 import App from './src/index'
-import 'antd/dist/antd.css'
+import configureStore from './configurestore'
 
-render(<App />, document.getElementById('root'))
+console.log(1111, configureStore)
+const store = configureStore()
+
+render(
+    <Provider store={store}>
+        <App />
+    </Provider>,
+    document.getElementById('root')
+)
