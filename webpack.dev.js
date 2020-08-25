@@ -19,13 +19,13 @@ module.exports = merge(base, {
         proxy: proxy,
         hot: true,
     },
-    devtool: "eval-source-map",
-    // watch: true, //事实打包
-    // watchOptions: {
-    //     aggregateTimeout: 300,
-    //     poll: 1000,
-    //     ignored: /node_modules/,
-    // },
+    devtool: "eval-cheap-module-source-map",
+    watch: true, //事实打包
+    watchOptions: {
+        aggregateTimeout: 300,
+        poll: 1000,
+        ignored: /node_modules/,
+    },
     plugins: [
         new HtmlWebpackPlugin({
             template: './client-app/index.html',
