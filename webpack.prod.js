@@ -1,11 +1,11 @@
-let {smart}= require('webpack-merge')
+let { merge } = require('webpack-merge')
 let base = require('./webpack.base')
 const OptimizeCss = require('optimize-css-assets-webpack-plugin')
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
-module.exports=smart(base,{
-    mode:'production',
+module.exports = merge(base, {
+    mode: 'production',
     optimization: { //生产环境下才会css压缩一行
         minimizer: [
             new OptimizeCss(),
@@ -17,19 +17,19 @@ module.exports=smart(base,{
         ],
         splitChunks: {
             cacheGroups: {
-              styles: {
-                name: 'styles',
-                test: /\.css$/,
-                chunks: 'all',
-                enforce: true,
-              },
+                styles: {
+                    name: 'styles',
+                    test: /\.css$/,
+                    chunks: 'all',
+                    enforce: true,
+                },
             },
         }
     },
-    plugins:[
+    plugins: [
         new HtmlWebpackPlugin({
             template: './client-app/index.html',
-            filename: "index.html", //默认就可以
+            filename: 'index.html', //默认就可以
             meta: { viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no' },
             title: '天卫二十二',
             minify: {

@@ -1,0 +1,22 @@
+/* .antbody {
+    font-size: 200px;
+    background: red;
+
+    
+    }
+}
+
+// :global(.ant-space-vertical) {
+//     margin-bottom: 120px;
+// } */
+#root {
+    width: 100%;
+    height: 100%;
+}
+
+/* div {
+    height: 500px;
+    width: 500px;
+    transform: rotate(45deg);
+    background: 100% 100% url(../assets/img/camera/back.JPG) no-repeat;
+} */

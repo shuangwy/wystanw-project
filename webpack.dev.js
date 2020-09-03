@@ -19,7 +19,7 @@ module.exports = merge(base, {
         proxy: proxy,
         hot: true,
     },
-    devtool: "eval-cheap-module-source-map",
+    devtool: 'eval-cheap-module-source-map',
     watch: true, //事实打包
     watchOptions: {
         aggregateTimeout: 300,
@@ -29,7 +29,7 @@ module.exports = merge(base, {
     plugins: [
         new HtmlWebpackPlugin({
             template: './client-app/index.html',
-            filename: "index.html", //默认就可以
+            filename: 'index.html', //默认就可以
             meta: {
                 viewport: 'width=device-width, initial-scale=1, shrink-to-fit=no'
             },

@@ -81,7 +81,9 @@
     "computed-property-spacing": 2,
     "key-spacing": 2,
     "keyword-spacing": 2,
-    "indent": ["error", 4, { "SwitchCase": 1 }]
+    "indent": ["error", 4, { "SwitchCase": 1 }],
+    "quotes": ["error", "single", { "allowTemplateLiterals": true }],
+    "jsx-quotes": ["error", "prefer-single"]
   },
   "env": {
     "mongo": true,

@@ -36,7 +36,7 @@ module.exports = {
     },
     entry: './client-app/index.js',
     output: {
-        filename: "js/bundle.[hash:8].js",
+        filename: 'js/bundle.[hash:8].js',
         path: path.resolve(__dirname, 'dist'),
         // publicPath:'https://wyshuang.com/'  添加公共路径
     },
@@ -46,10 +46,10 @@ module.exports = {
             loaders: [{
                 loader: 'babel-loader',
                 options: {
-                    presets: ['@babel/preset-env', ["@babel/preset-react", { "development": true }]],
+                    presets: ['@babel/preset-env', ['@babel/preset-react', { 'development': true }]],
                     plugins: [
-                        ["@babel/plugin-proposal-decorators", { "legacy": true }],
-                        ["@babel/plugin-proposal-class-properties", { "loose": true }],
+                        ['@babel/plugin-proposal-decorators', { 'legacy': true }],
+                        ['@babel/plugin-proposal-class-properties', { 'loose': true }],
                         '@babel/plugin-transform-runtime'
                     ]
                 }
@@ -65,14 +65,17 @@ module.exports = {
             ],
         }),
         new HappyPack({
-            id: "less",
+            id: 'less',
             threadPool: happyThreadPool,
             verbose: false,
             loaders: [
                 {
                     loader: 'css-loader',
                     options: {
-                        modules: true,
+                        modules: {
+                            localIdentName: '[name]_[local]_[hash:base64:5]',
+                        },
+                        sourceMap: true
                     }
                 },
                 'postcss-loader',
@@ -93,10 +96,11 @@ module.exports = {
             filename: 'css/[name].[hash:8].css',
             chunkFilename: '[id].css',
             ignoreOrder: false, // Enable to remove warnings about conflicting order
+            publicPath: '../'
         }),
         new CopyWebpackPulgin({
             patterns: [
-                { from: "./client-app/doc", to: "./doc" },
+                { from: './client-app/doc', to: './doc' },
             ]
         }),
         new Webpack.BannerPlugin({ banner: 'make 2020 by wystan' }), //添加版权信息
@@ -110,7 +114,11 @@ module.exports = {
     resolve: {
         modules: [path.resolve('node_modules')],
         alias: {
-            "@": path.resolve(__dirname, './client-app/src')
+            '@': path.resolve(__dirname, './client-app/src'),
+            'components': path.resolve(__dirname, './client-app/src/components'),
+            'pages': path.resolve(__dirname, './client-app/src/page'),
+            'models': path.resolve(__dirname, './client-app/src/models'),
+            'assets': path.resolve(__dirname, './client-app/assets'),
         },
         extensions: ['.js', '.css', '.json']
     },
@@ -127,7 +135,7 @@ module.exports = {
             },
             {
                 test: /\.html$/,
-                use: "html-withimg-loader"
+                use: 'html-withimg-loader'
             },
             {
                 test: /\.m?js$/,
@@ -138,7 +146,12 @@ module.exports = {
             {
                 test: /\.css$/g,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '../'
+                        }
+                    },
                     'happypack/loader?id=css',
                 ]
             },
@@ -146,7 +159,12 @@ module.exports = {
                 test: /\.less$/g,
                 exclude: /node_modules/,
                 use: [
-                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: MiniCssExtractPlugin.loader,
+                        options: {
+                            publicPath: '../'
+                        }
+                    },
                     'happypack/loader?id=less',
                 ]
             },
@@ -158,6 +176,7 @@ module.exports = {
                         options: {
                             limit: 200 * 1024,
                             outputPath: 'images',
+                            name: '[hash]-[name].[ext]',
                             // publicPath:'www.wyshuang.com', 为图片单独添加路径前缀
                         }
                     },
