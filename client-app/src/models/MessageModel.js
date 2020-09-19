@@ -3,14 +3,14 @@ const ADD_MESSAGE = 'ADD_MESSAGE';
 const REMOVE_MESSAGE = 'REMOVE_MESSAGE';
 const liveMessages = {};
 const MessageModel = function () {
-    const name = 'messages';
+    const name = 'MessageModel';
     return {
         name,
         actionTypes: {
             ADD_MESSAGE,
             REMOVE_MESSAGE
         },
-        state: {
+        states: {
             byId: {},
             ids: [],
         },
@@ -23,8 +23,8 @@ const MessageModel = function () {
             };
         },
         actions: {
-            /* 产生一个提示消息 */
-            addMessage: (message) => (dispatch) => {
+            addMessage: (message) => ({ dispatch }) => {
+                console.log('dispatch123', dispatch)
                 const id = message.id || new Date().getTime();
                 const msg = {
                     ...message,
@@ -44,13 +44,14 @@ const MessageModel = function () {
                     }
                 };
                 liveMessages[id] = msg;
-                dispatch({
-                    type: ADD_MESSAGE,
-                    payload: msg
-                });
+                console.log('dispatch', dispatch)
+                // dispatch({
+                //     type: ADD_MESSAGE,
+                //     payload: msg
+                // });
             },
             /* 产生一个成功消息提示 */
-            addSuccessMessage: (desc, duration = 2, title = "成功") =>
+            addSuccessMessage: (desc, duration = 2, title = '成功') =>
                 MessageModel.actions.addMessage({
                     type: 'success',
                     title,
@@ -58,7 +59,7 @@ const MessageModel = function () {
                     desc
                 }),
             /* 产生一个失败消息提示 */
-            addErrorMessage: (desc, duration = 2, title = "错误") =>
+            addErrorMessage: (desc, duration = 2, title = '错误') =>
 
                 MessageModel.actions.addMessage({
                     type: 'error',
@@ -67,7 +68,7 @@ const MessageModel = function () {
                     desc
                 }),
             /* 产生一个警告消息提示 */
-            addWarningMessage: (desc, duration = 2, title = "警告") =>
+            addWarningMessage: (desc, duration = 2, title = '警告') =>
                 MessageModel.actions.addMessage({
                     type: 'warning',
                     title,
@@ -75,7 +76,7 @@ const MessageModel = function () {
                     desc
                 }),
             /* 产生一个普通消息提示 */
-            addInfoMessage: (desc, duration = 2, title = "消息") =>
+            addInfoMessage: (desc, duration = 2, title = '消息') =>
                 MessageModel.actions.addMessage({
                     type: 'info',
                     title,
@@ -86,7 +87,7 @@ const MessageModel = function () {
             addLoadingMessage: (payload) => {
                 let id;
                 let desc = payload;
-                let title = "加载";
+                let title = '加载';
                 if (typeof payload === 'object') {
                     id = payload.id;
                     desc = payload.desc;
@@ -136,7 +137,7 @@ const MessageModel = function () {
                 }),
         },
         reducers: {
-            byId: (state = MessageModel.state.byId, action) => {
+            byId: (state = MessageModel.states.byId, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case ADD_MESSAGE:
@@ -152,7 +153,7 @@ const MessageModel = function () {
                         return state;
                 }
             },
-            ids: (state = MessageModel.state.ids, action) => {
+            ids: (state = MessageModel.states.ids, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case ADD_MESSAGE:

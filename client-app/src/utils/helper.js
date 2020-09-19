@@ -1,17 +1,17 @@
 import jscookie from 'js-cookie';
 
-export const decodeHTML = (encodeHTML = "") => {
+export const decodeHTML = (encodeHTML = '') => {
     return encodeHTML
-        .replace(/&amp;/ig, "&")
-        .replace(/&nbsp;/ig, " ")
-        .replace(/&lt;/ig, "<")
-        .replace(/&gt;/ig, ">")
-        .replace(/&quot;/ig, "\"")
-        .replace(/&apos;/ig, "'"); // 转换字符串中的"'"符号
+        .replace(/&amp;/ig, '&')
+        .replace(/&nbsp;/ig, ' ')
+        .replace(/&lt;/ig, '<')
+        .replace(/&gt;/ig, '>')
+        .replace(/&quot;/ig, '"')
+        .replace(/&apos;/ig, '\''); // 转换字符串中的"'"符号
 };
 
 export const isEmptyData = (obj) => {
-    if (obj === undefined || obj === null || obj === "")
+    if (obj === undefined || obj === null || obj === '')
         return true;
     for (let item in obj) {
         return false;
@@ -54,27 +54,9 @@ export const joinRouteTitles = (matchResults) => {
     return title;
 };
 
-
-export const resolveUrl = function (uri, params, host) {
-    let url = `${host}${uri}`;
-
-    let query = '';
-    Object.keys(params).forEach(key => {
-        const val = typeof (params[key]) === 'object' ?
-            JSON.stringify(params[key]) : params[key];
-        if (query.length > 0) {
-            query += '&';
-        }
-        query += `${key}=${val}`;
-    });
-    return query === '' ?
-        encodeURI(`${url}`) :
-        encodeURI(`${url}?${query}`);
-};
-
 export const cookie = function () {
     if (typeof (document) === 'undefined') {
-        return { clear: ()=>{}, remove: ()=>{}, add: ()=>{}, };
+        return { clear: () => {}, remove: () => {}, add: () => {}, };
     }
     const _cookie = {
         clear: () => {
@@ -99,7 +81,7 @@ export const uuid = function () {
     const S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
     };
-    uuid = S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4();
+    uuid = S4() + S4() + '-' + S4() + '-' + S4() + '-' + S4() + '-' + S4() + S4() + S4();
     return uuid;
 };
 
@@ -123,7 +105,7 @@ export const transformNormalDataToTreeData = (data, key, parentKey) => {
         if (!node) {
             return null;
         }
-        let key = "children";
+        let key = 'children';
         if (typeof newChildren !== 'undefined') {
             node[key] = newChildren;
         }
@@ -188,19 +170,19 @@ export const formatNumber = (num) => {
         return '';
     }
     // eslint-disable-next-line no-useless-escape
-    var groups = (/([\-\+]?)(\d*)(\.\d+)?/g).exec("" + num),
+    var groups = (/([\-\+]?)(\d*)(\.\d+)?/g).exec('' + num),
         mask = groups[1], //符号位
-        integers = (groups[2] || "").split(""), //整数部分
-        decimal = groups[3] || "", //小数部分
+        integers = (groups[2] || '').split(''), //整数部分
+        decimal = groups[3] || '', //小数部分
         remain = integers.length % 3;
 
     var temp = integers.reduce(function (previousValue, currentValue, index) {
         if (index + 1 === remain || (index + 1 - remain) % 3 === 0) {
-            return previousValue + currentValue + ",";
+            return previousValue + currentValue + ',';
         } else {
             return previousValue + currentValue;
         }
-    }, "").replace(/\\,$/g, "");
+    }, '').replace(/\\,$/g, '');
     return mask + temp + decimal;
 };
 
@@ -213,3 +195,20 @@ export const constantize = (obj) => {
         }
     });
 };
+const resolveUrl = (uri, params, host) => {
+    let url = `${host}${uri}`;
+    let query = '';
+    Object.keys(params).forEach(key => {
+        const val = typeof (params[key]) === 'object' ?
+            JSON.stringify(params[key]) : params[key];
+        if (query.length > 0) {
+            query += '&';
+        }
+        query += `${key}=${val}`;
+    });
+    return encodeURI(`${url}?${query}`);
+};
+
+export {
+    resolveUrl
+}

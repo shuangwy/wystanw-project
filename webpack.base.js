@@ -5,7 +5,7 @@ const CopyWebpackPulgin = require('copy-webpack-plugin') //拷贝资源到dist
 const Webpack = require('webpack')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const HappyPack = require('happypack') //启用多线程打包
-// require("@babel/polyfill")
+require('@babel/polyfill')
 const happyThreadPool = HappyPack.ThreadPool({ size: 5 });
 module.exports = {
     mode: 'development',
@@ -38,6 +38,7 @@ module.exports = {
     output: {
         filename: 'js/bundle.[hash:8].js',
         path: path.resolve(__dirname, 'dist'),
+        libraryTarget: 'umd',
         // publicPath:'https://wyshuang.com/'  添加公共路径
     },
     plugins: [
@@ -46,10 +47,13 @@ module.exports = {
             loaders: [{
                 loader: 'babel-loader',
                 options: {
+                    cacheDirectory: true,
                     presets: ['@babel/preset-env', ['@babel/preset-react', { 'development': true }]],
                     plugins: [
                         ['@babel/plugin-proposal-decorators', { 'legacy': true }],
                         ['@babel/plugin-proposal-class-properties', { 'loose': true }],
+                        '@babel/transform-arrow-functions',
+                        '@babel/plugin-syntax-dynamic-import',
                         '@babel/plugin-transform-runtime'
                     ]
                 }

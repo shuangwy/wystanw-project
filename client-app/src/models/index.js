@@ -9,43 +9,50 @@ import _ from 'lodash'
 const allActions = {};
 const allModels = {};
 const allReducers = {};
-let allApis = [];
+const allActionsObj = {}
 const wrapModel = (model, alias) => {
     const selectors = {};
     const actions = {};
-    const apis = [];
-    const actionTypes = model.actionTypes;
-
     const modelWrapper = {
         wrappedModel: model,
         selectors,
         actions,
-        actionTypes,
-        apis
     };
     modelWrapper.selectors = model.selectors;
+    allActionsObj[alias] = actions
     Object.keys(model.actions).forEach(key => {
-        actions[key] = function () {
-            return model.actions[key](...arguments);
-        };
+        actions[key] = (params) => {
+            return (dispatch, getState) => model.actions[key](params)({ dispatch, state: getState(), actions: allActionsObj, [alias]: actions })
+        };      
     });
-    if (model.api) {
-        Object.keys(model.api).forEach(key => {
-            let funcString = model.api[key].toString();
-            let uriStrting = funcString.match(/['"]\/(\S*)[,?/]/);
-            if (uriStrting) {
-                apis.push(uriStrting[0].slice(2, -2));
-            }
-        });
-    }
 
     if (typeof model.reducers === 'function') {
         allReducers[model.name] = model.reducers;
-    } else if (!_.isEmpty(model.reducers)) {
-        allReducers[model.name] = combineReducers(model.reducers);
+    } else if (!_.isEmpty(model.state)) {
+        let temp = {}
+        if (model.state) {
+            Object.keys(model.state).forEach(key => {
+                const obj = {
+                    [key]: (state = model.state[key].defaultState, action) => {
+                        for (let idx in model.state[key].reducers) {
+                            if (typeof idx === 'string') {
+                                if (idx === action.type) {
+                                    return model.state[key].reducers[idx](state, action)
+                                } else {
+                                    return state
+                                }
+                            } else {
+                                // wait
+                            }
+                        }
+                    }
+                }
+                temp = { ...temp, ...obj }
+            })
+        }
+        allReducers[model.name] = combineReducers({ ...model.reducers, ...temp });
     }
     Object.assign(allActions, actions);
-    allApis = [...allApis, ...apis];
     allModels[alias] = modelWrapper;
     return modelWrapper;
 };
@@ -53,9 +60,10 @@ const wrapModel = (model, alias) => {
 
 export const BannerModel = wrapModel(_BannerModel, 'BannerModel');
 export const MessageModel = wrapModel(_MessageModel, 'MessageModel')
-export const RouterModel = wrapModel(_RouterModel, 'RouterModel');
+// export const RouterModel = wrapModel(_RouterModel, 'RouterModel');
 export const SessionModel = wrapModel(_SessionModel, 'SessionModel');
 
+// console.log('allActions', allActions)
 export const actions = allActions;
 export const rootReducer = combineReducers(allReducers)
 export default rootReducer

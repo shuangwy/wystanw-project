@@ -16,7 +16,6 @@ const BannerModel = function () {
         $image_file_id: FileModel.schema.object
     });
     const array = new schema.Array(object);
-    console.log('array', array)
     return {
         name,
         schema: {
@@ -28,7 +27,7 @@ const BannerModel = function () {
             FETCH_BANNERS_SUCCESS,
             FETCH_BANNERS_FAILURE,
         },
-        state: {
+        states: {
             byId: {},
             ids: [],
             isFetching: false,
@@ -47,34 +46,28 @@ const BannerModel = function () {
             }
         },
         api: {
-            fetchBanners: ({ accessToken, host }) => request({
+            fetchBanners: {
                 uri: '/demo/json/banners',
-                queryParams: {
-                    invite_code: 1,            
-                },
-                accessToken,
-                host,
-            }),
+                method: 'GET'
+            },
         },
         actions: {
-            fetchBanners: (p, v) => (dispatch, getState) => {
-                const state = getState();
-                const host = RouterModel.selectors(state).getHost();
-                const accessToken = SessionModel.selectors(state).getAccessToken();
-                console.log('accessToken', accessToken)
-                return callApi({
-                    api: BannerModel.api.fetchBanners,
-                    params: { accessToken, host },
-                    schema: BannerModel.schema.array,
-                    REQUEST: FETCH_BANNERS_REQUEST,
-                    SUCCESS: FETCH_BANNERS_SUCCESS,
-                    FAILURE: FETCH_BANNERS_FAILURE,
-                    dispatch
-                });
+            fetchBanners: (p, v) => ({ dispatch, state }) => {
+                // const host = RouterModel.selectors(state).getHost();
+                // const accessToken = SessionModel.selectors(state).getAccessToken();
+                // return callApi({
+                //     api: BannerModel.api.fetchBanners,
+                //     params: { accessToken, host },
+                //     schema: BannerModel.schema.array,
+                //     REQUEST: FETCH_BANNERS_REQUEST,
+                //     SUCCESS: FETCH_BANNERS_SUCCESS,
+                //     FAILURE: FETCH_BANNERS_FAILURE,
+                //     dispatch
+                // });
             }
         },
         reducers: {
-            byId: (state = BannerModel.state.byId, action) => {
+            byId: (state = BannerModel.states.byId, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case FETCH_BANNERS_SUCCESS:
@@ -87,7 +80,7 @@ const BannerModel = function () {
                         return state;
                 }
             },
-            ids: (state = BannerModel.state.ids, action) => {
+            ids: (state = BannerModel.states.ids, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case FETCH_BANNERS_SUCCESS :
@@ -100,7 +93,7 @@ const BannerModel = function () {
                         return state;
                 }
             },
-            isFetching: (state = BannerModel.state.isFetching, action) => {
+            isFetching: (state = BannerModel.states.isFetching, action) => {
                 switch (action.type) {
                     case FETCH_BANNERS_REQUEST:
                         return true;

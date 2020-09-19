@@ -6,23 +6,24 @@ import jscookie from 'js-cookie';
 import { message } from 'antd';
 
 const {
-    isLogAPI,
     isBench,
     isKeepAccessTokenInQueryString,
     apiHost,
+    headers
 } = config;
-const handleNotOkFunc = (resp)=>{
+
+const handleNotOkFunc = (resp) => {
     const { status } = resp;
-    if (status == 401) {// 根据业务做相应处理
+    if (status == 401) {
         let originUrl = window.location.href;
         let originHost = `${window.location.protocol}//${window.location.host}`;
-        /* 老oa登录逻辑开始 */
         window.location.href = `/admin/oa/login?RETURN_URL=${originUrl}&RETURN_HOST=${originHost}`;
     }
 };
 
 
-export default ({ uri, queryParams, fetchParams, accessToken, host, handleNotOk = handleNotOkFunc }) => {
+export default ({ api, params, accessToken, host, handleNotOk = handleNotOkFunc }) => {
+    console.log('api', api, 'params', params)
     window.showOffLineError = window.showOffLineError === undefined ? false : window.showOffLineError;
     if (window.require && !window.navigator.onLine) {
         console.log('断网了我');
@@ -32,41 +33,22 @@ export default ({ uri, queryParams, fetchParams, accessToken, host, handleNotOk 
         }
         return null;
     }
-    const _queryParams = { ...queryParams }
-    const _fetchParams = { ...fetchParams, redirect: 'error' };
-    _fetchParams.headers = _fetchParams.headers || {};
-    const keyArray = Object.keys(authObject());
-    if (keyArray.length > 0) {
-        keyArray.forEach(key => {
-            // if (authObject()[key]) {
-            _fetchParams.headers[key] = authObject()[key];
-            // }
-        });
-    }
-
-
-    /* _static_为true表示是上传文件，如果是上传文件则不能这么stringify */
-    if (typeof _fetchParams.body === 'object') {
+    const _queryParams = { ...params }
+    const _fetchParams = { 
+        method: api.method, 
+        redirect: 'follow' };
+    _fetchParams.headers = { ...api.headers || headers };
+    let url
+    const _apiHost = host && typeof (host) === 'string' ? host : apiHost;
+    if (api.method === 'POST') {
+        url = `${_apiHost}${api.uri}`
         if (_fetchParams._static_) {
             _fetchParams.body = _fetchParams.body.params;
         } else {
-            _fetchParams.body = JSON.stringify(_fetchParams.body);
+            _fetchParams.body = JSON.stringify(params);
         }
-    }
-
-   
-    _fetchParams.credentials = undefined;
-    if (isKeepAccessTokenInQueryString && typeof (accessToken) === 'object') {
-        _queryParams[accessToken.name] = accessToken.value;
-    }
-    let _apiHost = typeof (host) === 'string' ? host : apiHost;
-    // let _apiHost = `//${window.location.host}`;
-    if (host) {
-        _apiHost = host;
-    }
-    const url = resolveUrl(uri, _queryParams, _apiHost);
-    if (isLogAPI) {
-        // console.log(url);
+    } else {
+        url = resolveUrl(api.uri, _queryParams, _apiHost);
     }
     let start;
     if (isBench) {
@@ -75,7 +57,6 @@ export default ({ uri, queryParams, fetchParams, accessToken, host, handleNotOk 
     return fetch(url, _fetchParams)
         .then(resp => {
             const { status, headers } = resp;
-            // 返回新token时 重新设置
             let newToken = headers.get('content-language');
             if (newToken) {
                 jscookie.set('auth.token', newToken.split(',')[1]);
@@ -84,15 +65,14 @@ export default ({ uri, queryParams, fetchParams, accessToken, host, handleNotOk 
             if (status === 200) {
                 return resp.text();
             } else if (status === 401) {
-                /* 约定401为未登录 */
                 handleNotOk(resp);
             } else {
-                /* 这里处理的应该就是404 500 666之类的错误了 */
                 return resp.json();
             }
         })
         .catch(e => {
-            throw new Error(`调用API[${url}]。 错误: ${e.stack}`);
+            console.log('e', e)
+            throw new Error(`调用API${url}。 错误: ${e.stack}`);
         })
         .then(resp => {
             try {
@@ -114,10 +94,6 @@ export default ({ uri, queryParams, fetchParams, accessToken, host, handleNotOk 
                 if (resp.message.errcode && resp.message.errcode === '404') {
                     throw new Error(resp.message.message);
                 }
-            }
-            /* 这个应该没用了 */
-            if (typeof (resp) === 'string') {
-                throw new Error(`${resp}`);
             }
             if (isBench) {
                 const cost = (new Date().getTime() - start);

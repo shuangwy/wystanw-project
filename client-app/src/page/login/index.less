@@ -1,0 +1,78 @@
+.login_wrapper {
+    width: 100%;
+    height: 100%;
+    background-color: #EAEEFA;
+    display: flex;
+    justify-content: center;
+    /*使子项目水平居中*/
+    align-items: center;
+
+    .login_wrapper_inner {
+        background: #fff;
+        padding: 40px 25px;
+        box-shadow: 10px 5px 5px #888888;
+        width: 300px;
+
+        .login_title {
+            color: #1D4AFB;
+        }
+
+        .login_btn {
+            background: #1D4AFB;
+            margin: 30px;
+            border-radius: 15px;
+            width: 100px;
+            height: 30px;
+            box-shadow: 10px 5px 5px #888888;
+        }
+
+        :global {
+            .ant-form-item {
+                margin-bottom: 0;
+
+                .ant-input-lg,
+                .ant-input-affix-wrapper-lg {
+                    padding-left: 0;
+                }
+            }
+
+            .ant-divider-horizontal {
+                margin: 2px 0;
+            }
+
+            .ant-typography-secondary {
+                margin-top: 40px;
+                display: block;
+                font-family: monospace;
+
+            }
+        }
+    }
+
+    .login_back_left {
+        height: 320px;
+        width: 320px;
+        font-size: 30px;
+        background: linear-gradient(90deg, red, orange, yellow, green, #1D4AFB, purple);
+        // &:after {
+        //     content: "";
+        //     background-size: 100%;
+        //     background: linear-gradient(90deg, red, orange, yellow, green, blue, purple);
+        //     opacity: 0.5; //透明度设置
+        //     z-index: 1;
+        //     height: 320px;
+        //     width: 320px;
+        //     position: absolute;
+        //     //一定要设置position:absolute,这样才能设置z-index，让背景处于内容的下一层
+        //     // top: 0px;
+        //     // left: 0px;
+        //     border-radius: 50%;
+        // }
+
+        img {
+            height: 100%;
+            width: 100%;
+            opacity: 0.8;
+        }
+    }
+}

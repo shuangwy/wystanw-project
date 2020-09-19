@@ -17,16 +17,15 @@ const RouterModel = function () {
             PRELOAD_FROM_SERVER,
             STORE_HOST_INFO,
         },
-        state: {
+        states: {
             path: null,
             preload: CLIENT,
             host: null,
         },
         selectors: (state) => {
             const currentState = state[name];
-            console.log(7777, currentState)
             return {
-                getHost: () => currentState.host,
+                getHost: () => 'localhost:8080',
                 getIsPreloadFromClient: () => currentState.preload === CLIENT,
                 getIsPreloadFromServer: () => currentState.preload === SERVER,
                 getCurrentRoutePath: () => currentState.path,
@@ -53,7 +52,7 @@ const RouterModel = function () {
             }),
         },
         reducers: {
-            path: (state = RouterModel.state.path, action) => {
+            path: (state = RouterModel.states.path, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case ENTER_ROUTE :
@@ -62,7 +61,7 @@ const RouterModel = function () {
                         return state;
                 }
             },
-            preload: (state = RouterModel.state.preload, action) => {
+            preload: (state = RouterModel.states.preload, action) => {
                 switch (action.type) {
                     case PRELOAD_FROM_CLIENT:        	
                         return CLIENT;
@@ -72,7 +71,7 @@ const RouterModel = function () {
                         return state;
                 }
             },
-            host: (state = RouterModel.state.host, action) => {
+            host: (state = RouterModel.states.host, action) => {
                 const { type, payload } = action;
                 switch (type) {
                     case STORE_HOST_INFO:
