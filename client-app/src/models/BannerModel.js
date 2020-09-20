@@ -1,10 +1,10 @@
-import { schema, arrayOf } from 'normalizr';
+import { schema } from 'normalizr';
 import _ from 'lodash';
-import callApi from '../services/call';
-import request from '../utils/request';
+// import callApi from '../services/call';
+// import request from '../utils/request';
 import FileModel from './FileModel';
-import RouterModel from './RouterModel';
-import SessionModel from './SessionModel';
+// import RouterModel from './RouterModel';
+// import SessionModel from './SessionModel';
 
 const FETCH_BANNERS_REQUEST = 'FETCH_BANNERS_REQUEST';
 const FETCH_BANNERS_SUCCESS = 'FETCH_BANNERS_SUCCESS';
@@ -70,12 +70,12 @@ const BannerModel = function () {
             byId: (state = BannerModel.states.byId, action) => {
                 const { type, payload } = action;
                 switch (type) {
-                    case FETCH_BANNERS_SUCCESS:
+                    case FETCH_BANNERS_SUCCESS: {
                         const { normalized } = payload; 
                         return {
                             ...state,
                             ...normalized.entities[BannerModel.name]
-                        };
+                        }}
                     default:
                         return state;
                 }
@@ -83,12 +83,12 @@ const BannerModel = function () {
             ids: (state = BannerModel.states.ids, action) => {
                 const { type, payload } = action;
                 switch (type) {
-                    case FETCH_BANNERS_SUCCESS :
+                    case FETCH_BANNERS_SUCCESS : {
                         const { normalized } = payload; 
                         return _.union(
                             state,
                             normalized.result
-                        )
+                        )}
                     default:
                         return state;
                 }

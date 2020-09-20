@@ -87,7 +87,7 @@
     "quotes": ["error", "single", { "allowTemplateLiterals": true }],
     "jsx-quotes": ["error", "prefer-single"],
     "arrow-spacing": ["error", { "before": true, "after": true }],
-    "no-multiple-empty-lines": [2, { "max": 0 }],
+    "no-multiple-empty-lines": [2, { "max": 1 }],
     "array-element-newline": ["error", { "multiline": true }],
     "no-unused-vars": ["error", { "args": "none" }]
   },
@@ -96,6 +96,7 @@
     "es6": true,
     "amd": true,
     "commonjs": true,
-    "node": true
+    "node": true,
+    "browser": true
   }
 }

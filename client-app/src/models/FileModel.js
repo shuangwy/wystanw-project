@@ -1,5 +1,4 @@
-import { schema, arrayOf } from 'normalizr';
-import _ from 'lodash';
+import { schema } from 'normalizr';
 import SessionModel from './SessionModel';
 import RouterModel from './RouterModel';
 import BannerModel from './BannerModel';
@@ -71,12 +70,12 @@ const FileModel = function () {
                 const { FETCH_BANNERS_SUCCESS } = BannerModel.actionTypes;
 
                 switch (type) {
-                    case FETCH_BANNERS_SUCCESS:
+                    case FETCH_BANNERS_SUCCESS: {
                         const { normalized } = payload;
                         return {
                             ...state,
                             ...normalized.entities[FileModel.name]
-                        };
+                        };}
                     default:
                         return state;
                 }

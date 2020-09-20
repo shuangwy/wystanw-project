@@ -1,10 +1,6 @@
-import { normalize } from 'normalizr';
-
 import MessageModel from '../models/MessageModel';
 import request from '../utils/request';
-
-
-const callApi = ({ uri, method, params = {}, onSuccess, ...rest }) => async ({ dispatch, actions: { MessageModel: { addErrorMessage, addLoadingMessage, addSuccessMessage }}}) => {
+const callApi = ({ uri, method, params = {}, onSuccess, ...rest }) => async ({ dispatch, state, actions: { MessageModel: { addErrorMessage, addLoadingMessage, addSuccessMessage }}}) => {
     const { REQUEST, SUCCESS, FAILURE } = Object.values(rest)[0] 
     const _serializeParams = JSON.stringify(params);
     const name = `${uri}`;
@@ -30,7 +26,6 @@ const callApi = ({ uri, method, params = {}, onSuccess, ...rest }) => async ({ d
         if (typeof rawResponse === 'object' && rawResponse['__status__'] === 'break') {
             return;
         }
-
         dispatch({
             type: typeof SUCCESS === 'object' ? SUCCESS.type : SUCCESS,
             payload: {
@@ -44,7 +39,7 @@ const callApi = ({ uri, method, params = {}, onSuccess, ...rest }) => async ({ d
         return rawResponse;
     } catch (e) {
         if (typeof FAILURE === 'undefined') {
-            dispatch(addErrorMessage(`${name}, action type[FAILURE] undeinfed`));
+            dispatch(addErrorMessage(`${name}, action type[FAILURE] undefined`));
             return;
         }
         if (FAILURE.message) {
@@ -68,14 +63,13 @@ const callApi = ({ uri, method, params = {}, onSuccess, ...rest }) => async ({ d
         }
     } finally {
         if (loadingMsgId) {
-            const { getLiveMessage } = MessageModel.selectors(getState());
+            const { getLiveMessage } = MessageModel.selectors(state);
             const liveMsg = getLiveMessage(loadingMsgId);
             liveMsg.close('close-loading');
         }
     }
 };
 export default callApi
-
 function AsyncAction (action) {
     const actionType = action.toUpperCase().replace('/', '_')
     return {

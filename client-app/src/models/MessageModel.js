@@ -158,8 +158,7 @@ const MessageModel = function () {
                 switch (type) {
                     case ADD_MESSAGE:
                         return [
-                            ...state,
-                            payload.id
+                            ...state, payload.id
                         ];
                     case REMOVE_MESSAGE:
                         return state.filter(msg => msg.id !== payload);

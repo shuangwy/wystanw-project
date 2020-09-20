@@ -1,7 +1,7 @@
-import { combineReducers, bindActionCreators } from 'redux';
+import { combineReducers } from 'redux';
 import _BannerModel from './BannerModel';
 import _MessageModel from './MessageModel'
-import _RouterModel from './RouterModel';
+// import _RouterModel from './RouterModel';
 import _SessionModel from './SessionModel';
 
 import _ from 'lodash'
@@ -56,7 +56,6 @@ const wrapModel = (model, alias) => {
     allModels[alias] = modelWrapper;
     return modelWrapper;
 };
-
 
 export const BannerModel = wrapModel(_BannerModel, 'BannerModel');
 export const MessageModel = wrapModel(_MessageModel, 'MessageModel')

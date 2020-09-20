@@ -1,4 +1,3 @@
-import { schema, arrayOf } from 'normalizr';
 
 const PRELOAD_FROM_CLIENT = 'PRELOAD_FROM_CLIENT';
 const PRELOAD_FROM_SERVER = 'PRELOAD_FROM_SERVER';

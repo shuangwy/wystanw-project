@@ -1,13 +1,13 @@
 import React, { Component } from 'react'
 import 'antd/dist/antd.css'
 import { connect } from 'react-redux'
-import { BannerModel } from '@/models'
+// import { BannerModel } from '@/models'
 import Login from './page/login'
 import './index.css'
 class App extends Component {
     componentDidMount () {
         // const { fetchBanners } = this.props
-        // console.log('componetDidMount', this.props)
+        // console.log('componentDidMount', this.props)
         // fetchBanners('12', '34')
     }
     render () {
@@ -23,13 +23,10 @@ const mapStateToProps = (state, props) => {
         // getBanners: getBanners()
     }
 }
-const mapDispatchProps = (disapatch, props) => {
-    console.log('disapatch', disapatch)
+const mapDispatchProps = (dispatch, props) => {
+    console.log('dispatch', dispatch)
     return {
-        
     }
-
 }
 // const { fetchBanners } = BannerModel.actions
-
 export default connect(mapStateToProps, mapDispatchProps)(App)

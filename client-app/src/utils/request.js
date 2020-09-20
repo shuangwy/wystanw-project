@@ -1,17 +1,15 @@
 import fetch from 'isomorphic-fetch';
 import * as config from '../services/config';
 import { resolveUrl } from '../utils/helper';
-import authObject from './authObject';
+// import authObject from './authObject';
 import jscookie from 'js-cookie';
 import { message } from 'antd';
-
 const {
     isBench,
-    isKeepAccessTokenInQueryString,
+    // isKeepAccessTokenInQueryString,
     apiHost,
     headers
 } = config;
-
 const handleNotOkFunc = (resp) => {
     const { status } = resp;
     if (status == 401) {
@@ -20,8 +18,6 @@ const handleNotOkFunc = (resp) => {
         window.location.href = `/admin/oa/login?RETURN_URL=${originUrl}&RETURN_HOST=${originHost}`;
     }
 };
-
-
 export default ({ api, params, accessToken, host, handleNotOk = handleNotOkFunc }) => {
     console.log('api', api, 'params', params)
     window.showOffLineError = window.showOffLineError === undefined ? false : window.showOffLineError;
@@ -50,10 +46,10 @@ export default ({ api, params, accessToken, host, handleNotOk = handleNotOkFunc 
     } else {
         url = resolveUrl(api.uri, _queryParams, _apiHost);
     }
-    let start;
-    if (isBench) {
-        start = new Date().getTime();
-    }
+    // let start;
+    // if (isBench) {
+    //     start = new Date().getTime();
+    // }
     return fetch(url, _fetchParams)
         .then(resp => {
             const { status, headers } = resp;
@@ -91,12 +87,12 @@ export default ({ api, params, accessToken, host, handleNotOk = handleNotOkFunc 
                     throw new Error(resp.message.errorMsg);
                 }
                 // ibp错误提示处理2
-                if (resp.message.errcode && resp.message.errcode === '404') {
+                if (resp.message.errorCode && resp.message.errorCode === '404') {
                     throw new Error(resp.message.message);
                 }
             }
             if (isBench) {
-                const cost = (new Date().getTime() - start);
+                // const cost = (new Date().getTime() - start);
                 // console.log(`|====== Fetch(${cost}ms) ======|`);
                 // console.log(`${url}`);
                 // console.log("|===================|");
